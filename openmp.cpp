@@ -76,13 +76,10 @@ int main(int argc, char* argv[]) {
         printMatrix("Matrix B", matrix_B);
     }
 
-    //const int BLOCK_SIZE = 16;
     start_time = omp_get_wtime();
 
     #pragma omp parallel for
-        for (int i = 0; i < M; ++i) { // i - це індекс рядка в C (і в A)
-            // int thread_id = omp_get_thread_num(); // Можна отримати ID потоку для налагодження
-            // if (N <= 20 && K <= 20) std::cout << "Thread " << thread_id << " processing row " << i << std::endl;
+        for (int i = 0; i < M; ++i) { // i - індекс рядка в C (і в A)
             for (int j = 0; j < N; ++j) { // j - індекс стовпця в C (і в B)
                 double sum = 0.0; // Локальна сума для кожного елемента C[i][j]
                 for (int l = 0; l < K; ++l) { // l - спільний індекс для стовпців A та рядків B
@@ -91,7 +88,6 @@ int main(int argc, char* argv[]) {
                 matrix_C[i][j] = sum;
             }
         }
-        // ------------------------------------------
 
     end_time = omp_get_wtime();
 
@@ -132,11 +128,10 @@ int main(int argc, char* argv[]) {
     std::cout << "Matrix dimensions: A(" << M << "x" << K << "), B(" << K << "x" << N << "), C(" << M << "x" << N << ")" << std::endl;
     std::cout << "Execution time (OpenMP): " << std::fixed << std::setprecision(5) << end_time - start_time << " seconds." << std::endl;
 
-    // Виведення кількості потоків, використаних OpenMP
     int num_threads_used = 0;
 #pragma omp parallel
     {
-#pragma omp master // Тільки головний потік виконає це
+#pragma omp master 
         num_threads_used = omp_get_num_threads();
     }
     std::cout << "Number of threads used (OpenMP): " << num_threads_used << std::endl;
